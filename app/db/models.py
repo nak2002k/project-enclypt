@@ -1,15 +1,19 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, BigInteger
+from sqlalchemy import (
+    Column, Integer, String, DateTime, ForeignKey, BigInteger
+)
 from sqlalchemy.orm import relationship
 from .session import Base
 
 class User(Base):
     __tablename__ = "users"
-    id          = Column(Integer, primary_key=True, index=True)
-    license_key = Column(String, unique=True, index=True, nullable=False)
-    tier        = Column(String, nullable=False)  # "guest", "account", "paid"
-    is_active   = Column(Integer, default=1)
-    created_at  = Column(DateTime, default=datetime.utcnow)
+    id            = Column(Integer, primary_key=True, index=True)
+    email         = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    license_key   = Column(String, unique=True, nullable=False)
+    tier          = Column(String, nullable=False)  # "guest","account","paid"
+    is_active     = Column(Integer, default=1)
+    created_at    = Column(DateTime, default=datetime.utcnow)
 
     files = relationship("FileMeta", back_populates="owner")
 
