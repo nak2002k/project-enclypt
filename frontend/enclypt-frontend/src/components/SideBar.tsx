@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext"
 import { DarkModeToggle } from "./DarkModeToggle"
 
 const links = [
+  { to: "/",      label: "Home",    icon: <IconLayoutDashboard className="w-5 h-5" /> },
   { to: "/encrypt", label: "Encrypt", icon: <IconUpload className="w-5 h-5" /> },
   { to: "/decrypt", label: "Decrypt", icon: <IconDownload className="w-5 h-5" /> },
   { to: "/dashboard", label: "Dashboard", icon: <IconLayoutDashboard className="w-5 h-5" /> },

@@ -43,6 +43,16 @@
 html {
   scroll-behavior: smooth;
 }
+html, body, #root {
+  height: 100%;
+}
+/* global dark/light gradient to match Landing */
+body.dark {
+  background: radial-gradient(circle at 30% 30%, #111, #000 80%);
+}
+body {
+  background: radial-gradient(circle at 30% 30%, #f0f4f8, #d9e2ec 80%);
+}
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

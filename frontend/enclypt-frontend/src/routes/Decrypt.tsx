@@ -65,7 +65,15 @@ export default function Decrypt() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex items-center justify-center h-full px-4">
+      <div className="w-full max-w-lg">
+        <div
+          className="
+            bg-white/10 dark:bg-black/30 
+            backdrop-blur-lg rounded-2xl 
+            border border-white/20 dark:border-black/40 
+            shadow-xl p-6"
+        >
         <motion.h2
           className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6"
           initial={{ opacity: 0, y: 10 }}
@@ -165,6 +173,9 @@ export default function Decrypt() {
           </Card>
         </motion.div>
       </div>
+      </div>
+      </div>
+      
     </Layout>
   )
 }

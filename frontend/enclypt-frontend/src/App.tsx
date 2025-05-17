@@ -6,19 +6,20 @@ import Decrypt from "@/routes/Decrypt"
 import Dashboard from "@/routes/Dashboard"
 import Login from "@/routes/Login"
 import Register from "@/routes/Register"
+import Landing from "@/routes/Landing"
 import { useAuth } from "@/context/AuthContext"
+
 
 export default function App() {
   const { isAuthenticated } = useAuth()
 
   return (
     <Routes>
-      {/* Guest‐accessible pages */}
-      <Route path="/" element={<Navigate to="/encrypt" replace />} />
+      <Route path="/" element={<Landing />} />
+      {/* always available */}
       <Route path="/encrypt" element={<Encrypt />} />
       <Route path="/decrypt" element={<Decrypt />} />
 
-      {/* Auth pages (only shown if not logged in) */}
       {!isAuthenticated && (
         <>
           <Route path="/login" element={<Login />} />
@@ -26,17 +27,12 @@ export default function App() {
         </>
       )}
 
-      {/* Dashboard is protected */}
       <Route
         path="/dashboard"
         element={
-          isAuthenticated
-            ? <Dashboard />
-            : <Navigate to="/encrypt" replace />
+          isAuthenticated ? <Dashboard /> : <Navigate to="/" replace />
         }
       />
-
-      {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
