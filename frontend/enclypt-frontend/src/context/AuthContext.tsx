@@ -5,9 +5,9 @@ import React, {
   useContext,
   ReactNode,
   useEffect,
+  useCallback,
 } from "react"
 import { useNavigate } from "react-router-dom"
-import jwtDecode from "jwt-decode"
 
 interface JwtPayload {
   exp?: number
@@ -23,57 +23,61 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+/** Decode a JWT without external deps */
+function decodeJwt(token: string): JwtPayload {
+  try {
+    const payload = token.split(".")[1]
+    // base64url → base64
+    let b64 = payload.replace(/-/g, "+").replace(/_/g, "/")
+    // pad to multiple of 4
+    while (b64.length % 4) b64 += "="
+    const json = atob(b64)
+    return JSON.parse(json)
+  } catch {
+    return {}
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
-  const [token, setToken] = useState<string | null>(() => {
-    // load from storage on init
-    return localStorage.getItem("token")
-  })
+  const [token, setToken] = useState<string | null>(() =>
+    typeof localStorage !== "undefined" ? localStorage.getItem("token") : null
+  )
 
-  // helper to clear state + storage + redirect
-  const logout = () => {
+  const logout = useCallback(() => {
     setToken(null)
     localStorage.removeItem("token")
     navigate("/login", { replace: true })
-  }
+  }, [navigate])
 
-  const login = (tok: string) => {
-    // decode & check expiration before storing
-    try {
-      const { exp } = jwtDecode<JwtPayload>(tok)
+  const login = useCallback(
+    (tok: string) => {
+      const { exp } = decodeJwt(tok)
       if (exp && Date.now() >= exp * 1000) {
-        throw new Error("Token already expired")
+        console.error("Token expired on login")
+        return
       }
-    } catch (err) {
-      console.error("Invalid token:", err)
-      return
-    }
-    localStorage.setItem("token", tok)
-    setToken(tok)
-    navigate("/dashboard", { replace: true })
-  }
+      localStorage.setItem("token", tok)
+      setToken(tok)
+      navigate("/dashboard", { replace: true })
+    },
+    [navigate]
+  )
 
-  // auto‐logout if token expires during session
+  // Auto-logout when JWT expires
   useEffect(() => {
     if (!token) return
-    let timer: ReturnType<typeof setTimeout>
-    try {
-      const { exp } = jwtDecode<JwtPayload>(token)
-      if (exp) {
-        const ms = exp * 1000 - Date.now()
-        if (ms <= 0) {
-          logout()
-        } else {
-          timer = setTimeout(logout, ms)
-        }
-      }
-    } catch {
+    const { exp } = decodeJwt(token)
+    if (!exp) return
+
+    const ms = exp * 1000 - Date.now()
+    if (ms <= 0) {
       logout()
+    } else {
+      const timer = setTimeout(logout, ms)
+      return () => clearTimeout(timer)
     }
-    return () => {
-      if (timer) clearTimeout(timer)
-    }
-  }, [token])
+  }, [token, logout])
 
   const isAuthenticated = Boolean(token)
 
@@ -86,8 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthContextType {
   const ctx = useContext(AuthContext)
-  if (!ctx) {
-    throw new Error("useAuth must be used inside AuthProvider")
-  }
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider")
   return ctx
 }

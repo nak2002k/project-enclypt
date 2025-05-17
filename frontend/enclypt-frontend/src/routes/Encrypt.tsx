@@ -84,7 +84,7 @@ export default function Encrypt() {
           </AnimatedCard>
         </motion.div>
 
-        {mutation.isLoading && (
+        {mutation.isPending && (
           <motion.div
             className="flex items-center justify-center space-x-2 mt-6"
             initial={{ opacity: 0 }}

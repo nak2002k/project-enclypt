@@ -52,9 +52,14 @@ export default function Decrypt() {
     },
   })
 
-  const handleSubmit = (e: FormEvent) => {
+  // v5 mutation statuses: "idle" | "pending" | "error" | "success"
+  const isPending = mutation.status === "pending"
+  const isError = mutation.status === "error"
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const form = new FormData(e.currentTarget as HTMLFormElement)
+    const form = new FormData(e.currentTarget)
+    form.set("method", method) // include method in FormData
     mutation.mutate(form)
   }
 
@@ -82,11 +87,9 @@ export default function Decrypt() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* File Input */}
                 <div>
-                  <Label
-                    htmlFor="file"
-                    className="text-gray-700 dark:text-gray-300"
-                  >
+                  <Label htmlFor="file" className="text-gray-700 dark:text-gray-300">
                     Encrypted File
                   </Label>
                   <Input
@@ -95,24 +98,24 @@ export default function Decrypt() {
                     type="file"
                     accept="*/*"
                     required
+                    disabled={isPending}
                     className="mt-1 bg-white dark:bg-gray-700"
                   />
                 </div>
 
+                {/* Method Selector */}
                 <div>
-                  <Label
-                    htmlFor="method"
-                    className="text-gray-700 dark:text-gray-300"
-                  >
+                  <Label htmlFor="method-trigger" className="text-gray-700 dark:text-gray-300">
                     Method
                   </Label>
-                  <Select
-                    id="method"
-                    name="method"
-                    value={method}
-                    onValueChange={(v) => setMethod(v as any)}
-                  >
-                    <SelectTrigger className="w-full mt-1 bg-white dark:bg-gray-700">
+                  {/* hidden input so FormData includes method */}
+                  <input type="hidden" name="method" value={method} />
+                  <Select value={method} onValueChange={(v) => setMethod(v as any)}>
+                    <SelectTrigger
+                      id="method-trigger"
+                      className="w-full mt-1 bg-white dark:bg-gray-700"
+                      disabled={isPending}
+                    >
                       <SelectValue placeholder="Select method" />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
@@ -123,30 +126,25 @@ export default function Decrypt() {
                   </Select>
                 </div>
 
+                {/* RSA Key Input */}
                 {method === "rsa" && (
                   <div>
-                    <Label
-                      htmlFor="rsaKey"
-                      className="text-gray-700 dark:text-gray-300"
-                    >
+                    <Label htmlFor="rsa_private_key" className="text-gray-700 dark:text-gray-300">
                       RSA Private Key
                     </Label>
                     <Input
-                      id="rsaKey"
+                      id="rsa_private_key"
                       name="rsa_private_key"
                       placeholder="-----BEGIN PRIVATE KEY-----"
+                      disabled={isPending}
                       className="mt-1 font-mono bg-white dark:bg-gray-700"
-                      rows={4}
                     />
                   </div>
                 )}
 
-                <AnimatedButton
-                  type="submit"
-                  className="w-full"
-                  disabled={mutation.isLoading}
-                >
-                  {mutation.isLoading ? (
+                {/* Submit Button */}
+                <AnimatedButton type="submit" className="w-full" disabled={isPending}>
+                  {isPending ? (
                     <>
                       <Loader2 className="animate-spin w-5 h-5 mr-2" />
                       Decrypting…
@@ -158,11 +156,10 @@ export default function Decrypt() {
               </form>
             </CardContent>
 
-            {mutation.isError && (
+            {/* Inline Error */}
+            {isError && (
               <CardFooter className="text-center text-sm text-red-600 dark:text-red-400">
-                {mutation.error instanceof Error
-                  ? mutation.error.message
-                  : "An unexpected error occurred."}
+                {(mutation.error as Error)?.message || "An unexpected error occurred."}
               </CardFooter>
             )}
           </Card>

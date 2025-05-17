@@ -117,3 +117,46 @@ export function getDashboard(token: string): Promise<DashboardData> {
 export function getLicenseKey(token: string): Promise<{ license_key: string }> {
   return getJSON<{ license_key: string }>("/dashboard/key", token);
 }
+export async function postFile(
+  path: string,
+  formData: FormData,
+  token?: string,
+  timeoutMs = 30000
+): Promise<Blob> {
+  const url = buildUrl(path)
+
+  const headers: Record<string, string> = {}
+  if (token) headers["Authorization"] = `Bearer ${token}`
+
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), timeoutMs)
+
+  let res: Response
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers,
+      body: formData,
+      signal: controller.signal,
+    })
+  } catch (err: any) {
+    clearTimeout(id)
+    if (err.name === "AbortError") throw new Error("Request timed out")
+    throw new Error("Network error")
+  } finally {
+    clearTimeout(id)
+  }
+
+  if (!res.ok) {
+    const text = await res.text()
+    let message = text
+    try {
+      const json = JSON.parse(text)
+      if (json.detail) message = json.detail
+    } catch {}
+    throw new Error(message)
+  }
+
+  return res.blob()
+}
+
