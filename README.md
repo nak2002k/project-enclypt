@@ -26,7 +26,6 @@ Built for creators, devs, and designers who want control, not chaos.
 |----------|------------------------------------------|
 | Guest    | Fernet only, 25 file limit, no account  
 | Account  | Fernet + AES-256, saves metadata  
-| Paid     | Fernet + AES-256 + RSA + offline unlocker  
 
 ---
 
