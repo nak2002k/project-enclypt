@@ -10,7 +10,7 @@ const ALLOWED_PATHS = new Set([
   "/encrypt",
   "/decrypt",
   "/dashboard",
-  "/dashboard/key",
+  "/dashboard/key",  // ← add this
 ]);
 
 function buildUrl(path: string): string {
@@ -33,49 +33,37 @@ async function apiRequest<T = any>({
   method = "POST",
   data,
   token,
-  timeoutMs = 30000, // 30s default
+  timeoutMs = 30000,
 }: RequestOptions): Promise<T> {
   const url = buildUrl(path);
 
-  // 3) Build headers
-  const headers: Record<string, string> = {
-    Accept: "application/json",
-  };
+  const headers: Record<string, string> = { Accept: "application/json" };
   let body: string | undefined;
+
   if (data !== undefined) {
     headers["Content-Type"] = "application/json";
-    // JSON.stringify is safe against injection
     body = JSON.stringify(data);
   }
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  // 4) Setup timeout
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
 
   let res: Response;
   try {
-    res = await fetch(url, {
-      method,
-      headers,
-      body,
-      signal: controller.signal,
-    });
+    res = await fetch(url, { method, headers, body, signal: controller.signal });
   } catch (err: any) {
-    if (err.name === "AbortError") {
-      throw new Error("Request timed out");
-    }
+    clearTimeout(id);
+    if (err.name === "AbortError") throw new Error("Request timed out");
     throw new Error("Network error");
   } finally {
     clearTimeout(id);
   }
 
-  // 5) Handle HTTP errors
   if (!res.ok) {
     const text = await res.text();
-    // try parse JSON { detail: "..." }
     let message = text;
     try {
       const json = JSON.parse(text);
@@ -84,20 +72,18 @@ async function apiRequest<T = any>({
     throw new Error(message);
   }
 
-  // 6) Parse response
   const contentType = res.headers.get("Content-Type") ?? "";
   if (contentType.includes("application/json")) {
-    return await res.json();
+    return res.json();
   }
-  // fallback (e.g. file download)
   // @ts-ignore
-  return await res.blob();
+  return res.blob();
 }
 
-// 7) Convenience wrappers
+// convenience wrappers
 export function postJSON<T = any>(
   path: string,
-  data: unknown,
+  data?: unknown,
   token?: string
 ): Promise<T> {
   return apiRequest<T>({ path, data, token, method: "POST" });
@@ -108,4 +94,26 @@ export function getJSON<T = any>(
   token?: string
 ): Promise<T> {
   return apiRequest<T>({ path, token, method: "GET" });
+}
+
+// our dashboard helpers
+export interface DashboardFile {
+  filename: string;
+  size: number;
+  method: string;
+  timestamp: string;
+}
+
+export interface DashboardData {
+  email: string;
+  tier: string;
+  files: DashboardFile[];
+}
+
+export function getDashboard(token: string): Promise<DashboardData> {
+  return getJSON<DashboardData>("/dashboard", token);
+}
+
+export function getLicenseKey(token: string): Promise<{ license_key: string }> {
+  return getJSON<{ license_key: string }>("/dashboard/key", token);
 }
