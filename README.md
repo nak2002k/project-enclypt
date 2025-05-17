@@ -61,7 +61,7 @@ Everything happens locally or in temp.
 - ✅ Offline decryptor app (WIP)
 - ✅ Dark mode planned into frontend
 - 🛠️ Login system in progress
-- 🚫 No file uploads or Stripe for now
+- 🚫 No file uploads or Sign ups for now
 
 ---
 
