@@ -3,6 +3,7 @@ import React, { FormEvent, useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
 import { useAuth } from "@/context/AuthContext"
 import { postFile } from "@/utils/api"
 import { Layout } from "@/components/Layout"
@@ -28,13 +29,14 @@ import { Loader2 } from "lucide-react"
 export default function Decrypt() {
   const { token } = useAuth()
   const [method, setMethod] = useState<"fernet" | "aes256" | "rsa">("fernet")
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
 
   const mutation = useMutation({
     mutationFn: (formData: FormData) => postFile("/decrypt", formData, token!),
     onMutate: () => toast.loading("Decrypting…"),
     onSuccess: (blob, form) => {
       toast.success("File decrypted! Download starting.")
-      // trigger download
       const url = URL.createObjectURL(blob)
       const a = document.createElement("a")
       const original = (form.get("file") as File)?.name || "file"
@@ -58,9 +60,9 @@ export default function Decrypt() {
 
   return (
     <Layout>
-      <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <motion.h2
-          className="text-3xl font-semibold mb-6"
+          className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -72,36 +74,48 @@ export default function Decrypt() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.2 }}
         >
-          <Card className="shadow-lg">
+          <Card className="shadow-lg bg-white dark:bg-gray-800">
             <CardHeader>
-              <CardTitle>Upload Encrypted File & Choose Method</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-gray-100">
+                Upload Encrypted File & Choose Method
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="file">Encrypted File</Label>
+                  <Label
+                    htmlFor="file"
+                    className="text-gray-700 dark:text-gray-300"
+                  >
+                    Encrypted File
+                  </Label>
                   <Input
                     id="file"
                     name="file"
                     type="file"
                     accept="*/*"
                     required
-                    className="mt-1"
+                    className="mt-1 bg-white dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="method">Method</Label>
+                  <Label
+                    htmlFor="method"
+                    className="text-gray-700 dark:text-gray-300"
+                  >
+                    Method
+                  </Label>
                   <Select
                     id="method"
                     name="method"
                     value={method}
                     onValueChange={(v) => setMethod(v as any)}
                   >
-                    <SelectTrigger className="w-full mt-1">
+                    <SelectTrigger className="w-full mt-1 bg-white dark:bg-gray-700">
                       <SelectValue placeholder="Select method" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                       <SelectItem value="fernet">Fernet (AES-128)</SelectItem>
                       <SelectItem value="aes256">AES-256</SelectItem>
                       <SelectItem value="rsa">RSA-OAEP</SelectItem>
@@ -111,12 +125,17 @@ export default function Decrypt() {
 
                 {method === "rsa" && (
                   <div>
-                    <Label htmlFor="rsaKey">RSA Private Key</Label>
+                    <Label
+                      htmlFor="rsaKey"
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      RSA Private Key
+                    </Label>
                     <Input
                       id="rsaKey"
                       name="rsa_private_key"
                       placeholder="-----BEGIN PRIVATE KEY-----"
-                      className="mt-1 font-mono"
+                      className="mt-1 font-mono bg-white dark:bg-gray-700"
                       rows={4}
                     />
                   </div>
@@ -140,7 +159,7 @@ export default function Decrypt() {
             </CardContent>
 
             {mutation.isError && (
-              <CardFooter className="text-center text-sm text-red-600">
+              <CardFooter className="text-center text-sm text-red-600 dark:text-red-400">
                 {mutation.error instanceof Error
                   ? mutation.error.message
                   : "An unexpected error occurred."}

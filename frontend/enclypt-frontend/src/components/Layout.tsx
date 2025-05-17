@@ -3,6 +3,12 @@ import React, { ReactNode, useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button }  from "@/components/ui/button";
 import { IconMenu2, IconX } from "@tabler/icons-react";
+import { DarkModeToggle } from "@/components/DarkModeToggle"
+// … inside your header JSX …
+<header className="flex items-center justify-between px-4 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+  {/* menu toggle, title, etc. */}
+  <DarkModeToggle />
+</header>
 
 export function Layout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(true);
