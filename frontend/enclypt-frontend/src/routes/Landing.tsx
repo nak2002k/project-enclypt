@@ -1,157 +1,192 @@
-// src/routes/Landing.tsx
-import React, { useCallback } from "react"
-import { useNavigate } from "react-router-dom"
-import { useTheme } from "next-themes"
-import { motion } from "framer-motion"
-import Particles from "react-tsparticles"
-import { loadFull } from "tsparticles"
-import { Button } from "@/components/ui/button"
+import { NavBar } from "@/components/Navbar"
 import { IconLock, IconKey, IconFingerprint } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
+import { motion } from "framer-motion"
+
+const features = [
+  {
+    title: "No Account Needed",
+    desc: "Encrypt up to 25 MB instantly—no sign-up, no fuss. When you’re ready for more, unlock unlimited storage and stronger encryption by creating an account.",
+    Icon: IconLock,
+  },
+  {
+    title: "Zero-Knowledge. Zero Storage.",
+    desc: "Your files never touch our servers. We only store minimal metadata. Your secrets are *always* yours. Even we can’t see them.",
+    Icon: IconKey,
+  },
+  {
+    title: "Offline Unlocker",
+    desc: "Upgrade for a downloadable Windows app that decrypts files offline. Take privacy into your own hands—no internet required.",
+    Icon: IconFingerprint,
+  },
+]
+
+const methods = [
+  {
+    Icon: IconLock,
+    title: "Fernet (AES-128)",
+    desc: (
+      <>
+        <span className="block font-medium mb-1">
+          <span className="text-indigo-600 dark:text-indigo-400">Everyone’s default.</span> Just set a password, encrypt, and decrypt anywhere. No keyfiles, no drama.
+        </span>
+        <span className="block text-xs text-gray-400">
+          Tech: Symmetric encryption, HMAC-authenticated, AES-128, one password to lock/unlock.
+        </span>
+      </>
+    ),
+    side: "right",
+  },
+  {
+    Icon: IconKey,
+    title: "AES-256 (CBC Mode)",
+    desc: (
+      <>
+        <span className="block font-medium mb-1">
+          <span className="text-emerald-600 dark:text-emerald-400">Stronger for accounts.</span> Maximum security for power users and businesses. Account required.
+        </span>
+        <span className="block text-xs text-gray-400">
+          Tech: AES-256, CBC, PKCS#7 padding, random IV.
+        </span>
+      </>
+    ),
+    side: "left",
+  },
+  {
+    Icon: IconFingerprint,
+    title: "RSA-OAEP",
+    desc: (
+      <>
+        <span className="block font-medium mb-1">
+          <span className="text-yellow-600 dark:text-yellow-400">Share securely, even with strangers.</span> Encrypt files for anyone if you have their public key. Only they can decrypt.
+        </span>
+        <span className="block text-xs text-gray-400">
+          Tech: Asymmetric RSA-2048+, OAEP, SHA-256.
+        </span>
+      </>
+    ),
+    side: "right",
+  },
+]
+
+const revealVariant = {
+  hidden: { opacity: 0, y: 60 },
+  show: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, type: "spring", bounce: 0.22 },
+  }),
+}
 
 export default function Landing() {
   const navigate = useNavigate()
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-
-  const particlesInit = useCallback(async (main) => {
-    await loadFull(main)
-  }, [])
-
-  const btnAnim = { whileHover: { scale: 1.05 }, whileTap: { scale: 0.95 } }
 
   return (
-    <div
-      className={`relative w-full h-screen overflow-hidden ${
-        isDark
-          ? "bg-gradient-to-br from-indigo-900 via-black to-gray-900"
-          : "bg-gradient-to-br from-blue-200 via-white to-blue-100"
-      }`}
-    >
-      {/* Particle background */}
-      <Particles
-        init={particlesInit}
-        options={{
-          fullScreen: { enable: false },
-          particles: {
-            number: { value: 60 },
-            size: { value: 3, random: true },
-            move: { speed: 0.4 },
-            opacity: { value: 0.5, random: true },
-            links: {
-              enable: true,
-              distance: 120,
-              color: isDark ? "#888" : "#555",
-              opacity: 0.2,
-              width: 1,
-            },
-          },
-          interactivity: {
-            events: { onHover: { enable: true, mode: "repulse" } },
-            modes: { repulse: { distance: 100 } },
-          },
-        }}
-        className="absolute inset-0 z-0"
-      />
+    <div className="min-h-screen w-full bg-white dark:bg-[#10141a] text-gray-900 dark:text-gray-100 flex flex-col transition-colors">
+      <NavBar />
 
-      {/* Gradient overlay for readability */}
-      <div
-        className={`absolute inset-0 z-10 ${
-          isDark ? "bg-black/60" : "bg-white/60"
-        }`}
-      />
-
-      {/* Hero content */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full px-4 text-center space-y-8">
+      {/* HERO */}
+      <section className="flex flex-col items-center justify-center min-h-[70vh] px-6 py-24 text-center bg-white dark:bg-[#10141a] transition-colors">
+        <motion.h1
+          className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight tracking-tight"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          File Encryption<br className="hidden sm:inline" />
+          <span className="text-indigo-600 dark:text-indigo-400">Reimagined</span>
+        </motion.h1>
+        <motion.p
+          className="text-xl md:text-2xl max-w-2xl mx-auto mb-10 text-gray-500 dark:text-gray-300 font-medium"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+        >
+          Enclypt protects your files with Fernet, AES-256 & RSA.<br />
+          Guest usage is free, upgrades unlock offline and unlimited power.
+        </motion.p>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="p-8 bg-white/20 dark:bg-black/20 backdrop-blur-md rounded-3xl border border-white/10"
+          transition={{ delay: 0.3, duration: 0.7 }}
         >
-          <IconLock
-            className={`mx-auto mb-4 w-16 h-16 ${
-              isDark ? "text-indigo-400" : "text-indigo-600"
-            } transition-transform hover:scale-105`}
-          />
-          <h1
-            className={`text-5xl sm:text-6xl font-extrabold leading-tight ${
-              isDark ? "text-white" : "text-gray-900"
-            }`}
+          <Button
+            size="lg"
+            className="mt-2 px-8 py-3 text-lg font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 shadow-xl"
+            onClick={() => navigate("/encrypt")}
           >
-            Project Enclypt
-          </h1>
-          <p
-            className={`mt-4 max-w-xl text-lg sm:text-xl ${
-              isDark ? "text-gray-300" : "text-gray-700"
-            }`}
+            🔒 Encrypt now
+          </Button>
+        </motion.div>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-5xl mx-auto w-full px-6 py-20">
+        {features.map(({ title, desc, Icon }, i) => (
+          <motion.div
+            key={title}
+            className={`flex flex-col-reverse md:flex-row ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} items-center justify-between mb-16 gap-10`}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={revealVariant}
+            custom={i}
           >
-            Next-gen file encryption SaaS—Fernet, AES-256 & RSA-OAEP.
-            Guests get 25 MB free; upgrade for unlimited power and offline unlockers.
-          </p>
-        </motion.div>
-
-        {/* CTA Buttons */}
-        <motion.div
-          className="flex gap-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-        >
-          <motion.div {...btnAnim}>
-            <Button size="lg" onClick={() => navigate("/encrypt")}>
-              🔒 Encrypt
-            </Button>
-          </motion.div>
-          <motion.div {...btnAnim}>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate("/decrypt")}
-            >
-              🔓 Decrypt
-            </Button>
-          </motion.div>
-        </motion.div>
-
-        {/* Feature highlights */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-        >
-          {[
-            {
-              Icon: IconLock,
-              title: "Fernet (AES-128)",
-              desc: "Symmetric Authenticated Encryption with HMAC.",
-            },
-            {
-              Icon: IconKey,
-              title: "AES-256 CBC",
-              desc: "Secure IV + PKCS#7 padding.",
-            },
-            {
-              Icon: IconFingerprint,
-              title: "RSA-OAEP",
-              desc: "Public-key encryption with SHA-256.",
-            },
-          ].map(({ Icon, title, desc }) => (
-            <div
-              key={title}
-              className="flex flex-col items-center text-center space-y-2"
-            >
-              <Icon className="w-8 h-8 mb-1 text-indigo-400" />
-              <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
-                {title}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {desc}
-              </p>
+            {/* Text */}
+            <div className="md:w-2/3">
+              <h2 className="text-2xl font-bold mb-2">{title}</h2>
+              <p className="text-gray-600 dark:text-gray-300 text-lg">{desc}</p>
             </div>
-          ))}
-        </motion.div>
-      </div>
+            {/* Icon */}
+            <div className="flex-shrink-0 md:w-1/3 flex justify-center mb-4 md:mb-0">
+              <Icon className="w-16 h-16 text-indigo-400 dark:text-indigo-300 drop-shadow-lg" />
+            </div>
+          </motion.div>
+        ))}
+      </section>
+
+      {/* Encryption Methods — side-by-side */}
+      <section className="max-w-5xl mx-auto w-full px-6 pt-8 pb-24">
+        <h2 className="text-3xl font-bold mb-10 text-center">
+          Encryption Methods Explained
+        </h2>
+        {methods.map(({ Icon, title, desc, side }, i) => (
+          <motion.div
+            key={title}
+            className={`flex flex-col md:flex-row ${side === "right" ? "md:flex-row" : "md:flex-row-reverse"} items-center justify-between mb-16 gap-10`}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={revealVariant}
+            custom={i}
+          >
+            {/* Text */}
+            <div className="md:w-2/3">
+              <h3 className="text-xl font-semibold mb-2">{title}</h3>
+              <div className="text-gray-700 dark:text-gray-200 text-base">{desc}</div>
+            </div>
+            {/* Icon */}
+            <div className="flex-shrink-0 md:w-1/3 flex justify-center mb-4 md:mb-0">
+              <Icon className="w-14 h-14" />
+            </div>
+          </motion.div>
+        ))}
+      </section>
+
+      {/* CTA Footer */}
+      <footer className="py-14 flex flex-col items-center mt-12 bg-white dark:bg-[#10141a] transition-colors">
+        <Button
+          size="lg"
+          className="px-8 py-3 text-lg font-semibold rounded-xl bg-gradient-to-r from-indigo-500 to-blue-700 hover:from-indigo-600 hover:to-blue-800 shadow-xl"
+          onClick={() => navigate("/register")}
+        >
+          Create your free account &rarr;
+        </Button>
+        <span className="mt-8 text-xs text-gray-500 dark:text-gray-400">
+          &copy; {new Date().getFullYear()} Enclypt. All rights reserved.
+        </span>
+      </footer>
     </div>
   )
 }
