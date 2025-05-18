@@ -13,7 +13,7 @@ Built for creators, devs, and designers who want control, not chaos.
 - 🔢 Choose your encryption method:
   - 🟢 Fernet (AES-128) — fast & simple
   - 🔵 AES-256 (CBC) — stronger, account required
-  - 🔴 RSA — asymmetric 🔥, paid-only
+  - 🔴 RSA — asymmetric 
 - 🔍 License validation included
 - 🧠 Zero file storage, only metadata
 - 🌑 Built-in dark mode (cause you're not basic)
@@ -26,7 +26,6 @@ Built for creators, devs, and designers who want control, not chaos.
 |----------|------------------------------------------|
 | Guest    | Fernet only, 25 file limit, no account  
 | Account  | Fernet + AES-256, saves metadata  
-| Paid     | Fernet + AES-256 + RSA + offline unlocker  
 
 ---
 
@@ -62,7 +61,7 @@ Everything happens locally or in temp.
 - ✅ Offline decryptor app (WIP)
 - ✅ Dark mode planned into frontend
 - 🛠️ Login system in progress
-- 🚫 No file uploads or Stripe for now
+- 🚫 No file uploads or Sign ups for now
 
 ---
 
