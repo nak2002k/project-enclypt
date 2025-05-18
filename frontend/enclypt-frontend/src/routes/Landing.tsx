@@ -1,11 +1,12 @@
+// src/routes/Landing.tsx
+
 import React, { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { IconLock, IconKey, IconFingerprint } from "@tabler/icons-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "next-themes"
-import { DarkModeToggle } from "@/components/DarkModeToggle"
-import Footer from "../components/Footer"
+import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 
 const features = [
@@ -66,10 +67,9 @@ export default function Landing() {
 
   // Index for which feature is active
   const [idx, setIdx] = useState(0)
-  // Lock to avoid rapid-fire scroll
   const lock = useRef(false)
 
-  // Scroll up/down to change feature (like Apple page!)
+  // Scroll wheel and up/down arrows to move through features
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
       if (lock.current) return
@@ -87,7 +87,6 @@ export default function Landing() {
     return () => window.removeEventListener("wheel", onWheel)
   }, [idx])
 
-  // Keyboard navigation (optional, for accessibility)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" && idx < features.length - 1) setIdx(idx + 1)
@@ -97,18 +96,15 @@ export default function Landing() {
     return () => window.removeEventListener("keydown", onKey)
   }, [idx])
 
-  // Fancy bg on light/dark mode
+  // Gradient background per theme
   const bgPattern = isDark
     ? "bg-gradient-to-br from-indigo-950 via-black to-gray-900"
-    : "bg-gradient-to-br from-blue-100 via-white to-blue-50 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))]"
+    : "bg-gradient-to-br from-blue-100 via-white to-blue-50"
 
   return (
     <div className={`min-h-screen w-full transition-colors ${bgPattern}`}>
-      {/* Nav */}
-
       <Navbar />
-
-      {/* Headline/Hero */}
+      {/* HERO */}
       <section className="flex flex-col items-center justify-center min-h-[60vh] px-6 py-24 text-center relative z-10">
         <motion.h1
           className="text-6xl md:text-7xl font-black mb-8 tracking-tight"
@@ -138,17 +134,17 @@ export default function Landing() {
         </Button>
       </section>
 
-      {/* Features one-by-one carousel */}
+      {/* Features one-by-one carousel (LEFT desc, RIGHT icon) */}
       <section className="flex flex-col items-center min-h-[50vh] w-full px-6 py-12 transition-colors">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={idx}
-            className="max-w-3xl w-full mx-auto flex flex-col md:flex-row items-center gap-8"
+            className="max-w-4xl w-full mx-auto flex flex-col md:flex-row items-center gap-10"
             {...blockAnim}
-            style={{ minHeight: 270 }}
+            style={{ minHeight: 290 }}
           >
-            {/* Left: desc */}
-            <div className="md:w-3/5">
+            {/* LEFT: desc */}
+            <div className="md:w-3/5 text-left">
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-indigo-700 dark:text-indigo-300">
                 {features[idx].title}
               </h2>
@@ -159,17 +155,16 @@ export default function Landing() {
                 {features[idx].story}
               </span>
             </div>
-                {
-                  React.createElement(
-                    features[idx].icon,
-                    {
-                      className: "w-24 h-24 text-indigo-400 dark:text-indigo-300 drop-shadow-xl"
-                    }
-                  )
-                }
+            {/* RIGHT: icon */}
+            <div className="md:w-2/5 flex justify-center">
+              {React.createElement(
+                features[idx].icon,
+                { className: "w-24 h-24 text-indigo-400 dark:text-indigo-300 drop-shadow-xl" }
+              )}
+            </div>
           </motion.div>
         </AnimatePresence>
-        {/* Arrows for manual navigation (mobile-friendly) */}
+        {/* Manual nav */}
         <div className="flex items-center gap-8 mt-8">
           <Button
             variant="outline"
@@ -188,7 +183,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Encryption methods, one at a time */}
+      {/* Encryption Methods (alternate L/R icon + desc) */}
       <section className="flex flex-col items-center min-h-[50vh] w-full px-6 py-12">
         <h2 className="text-4xl font-bold mb-14 text-center tracking-tight">
           Encryption methods: Choose your weapon
@@ -206,7 +201,7 @@ export default function Landing() {
                 animate: { opacity: 1, x: 0, transition: { duration: 0.6 } },
               }}
             >
-              <div className="md:w-3/5">
+              <div className="md:w-3/5 text-left">
                 <h3 className="text-2xl md:text-3xl font-bold mb-3 text-indigo-700 dark:text-indigo-300">
                   {enc.title}
                 </h3>
@@ -215,7 +210,10 @@ export default function Landing() {
                 </p>
               </div>
               <div className="md:w-2/5 flex justify-center">
-                <enc.icon className="w-20 h-20 text-indigo-400 dark:text-indigo-300 drop-shadow-xl" />
+                {React.createElement(
+                  enc.icon,
+                  { className: "w-20 h-20 text-indigo-400 dark:text-indigo-300 drop-shadow-xl" }
+                )}
               </div>
             </motion.div>
           ))}
