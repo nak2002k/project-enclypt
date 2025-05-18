@@ -13,7 +13,7 @@ Built for creators, devs, and designers who want control, not chaos.
 - 🔢 Choose your encryption method:
   - 🟢 Fernet (AES-128) — fast & simple
   - 🔵 AES-256 (CBC) — stronger, account required
-  - 🔴 RSA — asymmetric 🔥, paid-only
+  - 🔴 RSA — asymmetric 
 - 🔍 License validation included
 - 🧠 Zero file storage, only metadata
 - 🌑 Built-in dark mode (cause you're not basic)
