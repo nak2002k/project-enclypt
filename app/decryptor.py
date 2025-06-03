@@ -1,7 +1,7 @@
 import os
 import uuid
 from pathlib import Path
-from base64 import urlsafe_b64decode
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 from typing import Literal
 
 from cryptography.fernet import InvalidToken, Fernet
@@ -30,10 +30,10 @@ def fernet_decrypt(token: bytes, password: str) -> bytes:
         raise ValueError("Invalid token format.")
     salt = token[:16]
     token_body = token[16:]
-    # Derive same key
-    key = urlsafe_b64decode(urlsafe_b64encode(derive_key(password, salt)))
+    # Derive same key as encryptor
+    key = urlsafe_b64encode(derive_key(password, salt))
     try:
-        return Fernet(urlsafe_b64encode(derive_key(password, salt))).decrypt(token_body)
+        return Fernet(key).decrypt(token_body)
     except InvalidToken:
         raise ValueError("Fernet decryption failed: invalid key or corrupted data.")
 
