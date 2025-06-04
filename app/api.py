@@ -68,8 +68,13 @@ async def encrypt_endpoint(
 
     # encrypt
     try:
-        out = await encrypt_file(file=file, password=user.license_key,
-                                  method=method, rsa_public_key=rsa_public_key)
+        out = await encrypt_file(
+            file=file,
+            password=user.license_key,
+            method=method,
+            user_level=user.tier,
+            rsa_public_key=rsa_public_key,
+        )
     except PermissionError as e:
         raise HTTPException(403, str(e))
     except ValueError as e:
@@ -102,8 +107,11 @@ async def decrypt_endpoint(
 
     try:
         out = await decrypt_file(
-            file=file, password=user.license_key,
-            method=method, rsa_private_key=rsa_private_key
+            file=file,
+            password=user.license_key,
+            method=method,
+            user_level=user.tier,
+            rsa_private_key=rsa_private_key,
         )
     except ValueError as e:
         raise HTTPException(400, str(e))
