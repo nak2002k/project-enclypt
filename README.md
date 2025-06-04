@@ -24,8 +24,9 @@ Built for creators, devs, and designers who want control, not chaos.
 
 | Tier     | Access                                  |
 |----------|------------------------------------------|
-| Guest    | Fernet only, 25 file limit, no account  
-| Account  | Fernet + AES-256, saves metadata  
+| Guest    | Fernet only, 25MB cap per file, no account
+| Account  | Fernet + AES-256, 100MB cap, license key provided
+| Paid     | Fernet + AES-256 + RSA, no size limit
 
 ---
 
@@ -38,8 +39,10 @@ We store only:
 - Timestamp
 - User (if any)
 
-**Files are never stored.**  
+**Files are never stored.**
 Everything happens locally or in temp.
+All file metadata is also written to a small `file_metadata.json` so the
+dashboard can show your history even without a database.
 
 ---
 

@@ -7,7 +7,13 @@ import Skeleton from "react-loading-skeleton"
 import { toast } from "sonner"
 import { Layout } from "@/components/Layout"
 import { DashboardTable } from "@/components/DashboardTable"
-import { getDashboard, getLicenseKey, type DashboardData } from "@/utils/api"
+import {
+  getDashboard,
+  getDashboardJson,
+  getLicenseKey,
+  type DashboardData,
+  type DashboardFile,
+} from "@/utils/api"
 import { useAuth } from "@/context/AuthContext"
 import { AnimatedCard } from "@/components/ui/AnimatedCard"
 import {
@@ -34,6 +40,14 @@ export default function Dashboard() {
     retry: false,
   })
 
+  const jsonQuery = useQuery<{ files: DashboardFile[] }>({
+    queryKey: ["dashboard-json"],
+    queryFn: () => getDashboardJson(token!),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  })
+
   // 2) License key query
   const keyQuery = useQuery<{ license_key: string }>({
     queryKey: ["licenseKey"],
@@ -50,10 +64,22 @@ export default function Dashboard() {
   }, [dashboardQuery.isError])
 
   useEffect(() => {
+    if (jsonQuery.isError) {
+      toast.error(`Failed to load file list: ${jsonQuery.error?.message}`)
+    }
+  }, [jsonQuery.isError])
+
+  useEffect(() => {
     if (dashboardQuery.data) {
       toast.success("Dashboard loaded")
     }
   }, [dashboardQuery.data])
+
+  useEffect(() => {
+    if (jsonQuery.data) {
+      toast.success("File list updated")
+    }
+  }, [jsonQuery.data])
 
   // 4) Side-effects: license key errors
   useEffect(() => {
@@ -63,6 +89,7 @@ export default function Dashboard() {
   }, [keyQuery.isError])
 
   const dashData = dashboardQuery.data
+  const jsonFiles = jsonQuery.data?.files
 
   return (
     <Layout>
@@ -204,10 +231,13 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <DashboardTable files={dashData.files} onShowKey={() => setShowKey(true)} />
+                  <DashboardTable
+                    files={jsonFiles ?? dashData.files}
+                    onShowKey={() => setShowKey(true)}
+                  />
                 </CardContent>
                 <CardFooter className="text-center text-sm text-gray-500 dark:text-gray-400">
-                  Showing {dashData.files.length} items
+                  Showing {(jsonFiles ?? dashData.files).length} items
                 </CardFooter>
               </AnimatedCard>
             </motion.div>

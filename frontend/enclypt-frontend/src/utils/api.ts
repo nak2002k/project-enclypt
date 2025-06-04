@@ -11,6 +11,7 @@ const ALLOWED_PATHS = new Set([
   "/decrypt",
   "/dashboard",
   "/dashboard/key",  // ← add this
+  "/dashboard/json",
 ]);
 
 function buildUrl(path: string): string {
@@ -116,6 +117,12 @@ export function getDashboard(token: string): Promise<DashboardData> {
 
 export function getLicenseKey(token: string): Promise<{ license_key: string }> {
   return getJSON<{ license_key: string }>("/dashboard/key", token);
+}
+
+export function getDashboardJson(
+  token: string
+): Promise<{ files: DashboardFile[] }> {
+  return getJSON<{ files: DashboardFile[] }>("/dashboard/json", token);
 }
 export async function postFile(
   path: string,
