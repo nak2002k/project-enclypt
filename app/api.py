@@ -141,3 +141,8 @@ def dashboard(user=Depends(get_current_user), db: Session = Depends(lambda: Sess
 @router.get("/dashboard/key")
 def get_license_key(user=Depends(get_current_user)):
     return {"license_key": user.license_key}
+
+@router.get("/dashboard/json")
+def dashboard_json(user=Depends(get_current_user)):
+    from app.json_store import get_entries
+    return {"files": get_entries(user.license_key)}
