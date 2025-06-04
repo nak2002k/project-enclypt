@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -8,8 +9,9 @@ from sqlalchemy.orm import Session
 from .db.session import SessionLocal
 from .db.crud    import get_user_by_email, get_user_by_license
 
-# SECRET – replace with env var in prod
-SECRET_KEY    = "CHANGE_THIS_SECRET"
+# SECRET used for signing JWTs
+# In production, set the SECRET_KEY environment variable
+SECRET_KEY    = os.getenv("SECRET_KEY", "CHANGE_THIS_SECRET")
 ALGORITHM     = "HS256"
 ACCESS_EXPIRE = timedelta(hours=2)
 

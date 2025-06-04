@@ -24,22 +24,25 @@ Built for creators, devs, and designers who want control, not chaos.
 
 | Tier     | Access                                  |
 |----------|------------------------------------------|
-| Guest    | Fernet only, 25 file limit, no account  
-| Account  | Fernet + AES-256, saves metadata  
+- **Desktop Tool:** Tkinter GUI for offline decryption (now prettier)
+- **Auth:** Fully functional login & signup
+- **Frontend:** React + Tailwind with dark mode
 
 ---
 
-## 📁 Metadata Only
-
-We store only:
+- ✅ Dark mode UI in frontend
+- ✅ Login & signup flow working
+- ✅ File uploads for encrypt/decrypt
 - Filename
 - File hash
 - Encryption method
 - Timestamp
 - User (if any)
 
-**Files are never stored.**  
+**Files are never stored.**
 Everything happens locally or in temp.
+All file metadata is also written to a small `file_metadata.json` so the
+dashboard can show your history even without a database.
 
 ---
 
@@ -47,9 +50,10 @@ Everything happens locally or in temp.
 
 - **Backend:** FastAPI + Python (`cryptography`)
 - **Database:** SQLite (simple, local)
-- **Desktop Tool:** Tkinter GUI for offline decryption (now prettier)
-- **Auth:** Fully functional login & signup
-- **Frontend:** React + Tailwind with dark mode
+
+- **Desktop Tool:** Tkinter GUI for offline decryption
+- **Auth:** JWT-based login system
+- **Frontend:** Coming later (with clean dark-mode UI)
 
 ---
 
@@ -59,9 +63,11 @@ Everything happens locally or in temp.
 - ✅ Secure key validation and input checks
 - ✅ Decryption routes fully working
 - ✅ Offline decryptor app (Tkinter GUI)
+
 - ✅ Dark mode UI in frontend
 - ✅ Login & signup flow working
 - ✅ File uploads for encrypt/decrypt
+
 
 ---
 
@@ -76,8 +82,7 @@ uvicorn app.main:app --reload
 
 Launch the Tkinter GUI for decrypting files locally:
 
-```bash
-python offline_decryptor.py
+
 ```
 
 ✍️ Made by
