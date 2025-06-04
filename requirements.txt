@@ -4,3 +4,5 @@ sqlalchemy
 cryptography
 passlib[bcrypt]
 python-jose[cryptography]
+httpx<0.25
+python-multipart

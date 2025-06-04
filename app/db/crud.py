@@ -1,6 +1,7 @@
 import hashlib, uuid
 from sqlalchemy.orm import Session
 from .models import User, FileMeta
+from app.json_store import add_entry as add_json_entry
 
 # file‐size caps (per file and total‐usage)
 PER_FILE_CAP = {
@@ -50,4 +51,9 @@ def create_file_meta(
     db.add(meta)
     db.commit()
     db.refresh(meta)
+    # persist basic metadata to simple JSON file as lightweight store
+    try:
+        add_json_entry(user.license_key, filename, len(content), method)
+    except Exception:
+        pass  # JSON logging should never break the API
     return meta
