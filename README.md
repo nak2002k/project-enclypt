@@ -47,9 +47,9 @@ Everything happens locally or in temp.
 
 - **Backend:** FastAPI + Python (`cryptography`)
 - **Database:** SQLite (simple, local)
-- **Desktop Tool:** Tkinter GUI for offline decryption
-- **Auth:** Login system in progress
-- **Frontend:** Coming later (with clean dark-mode UI)
+- **Desktop Tool:** Tkinter GUI for offline decryption (now prettier)
+- **Auth:** Fully functional login & signup
+- **Frontend:** React + Tailwind with dark mode
 
 ---
 
@@ -58,10 +58,10 @@ Everything happens locally or in temp.
 - ✅ Backend encryption: Fernet, AES-256, RSA
 - ✅ Secure key validation and input checks
 - ✅ Decryption routes fully working
-- ✅ Offline decryptor app (WIP)
-- ✅ Dark mode planned into frontend
-- 🛠️ Login system in progress
-- 🚫 No file uploads or Sign ups for now
+- ✅ Offline decryptor app (Tkinter GUI)
+- ✅ Dark mode UI in frontend
+- ✅ Login & signup flow working
+- ✅ File uploads for encrypt/decrypt
 
 ---
 
@@ -70,6 +70,14 @@ Everything happens locally or in temp.
 ```bash
 pip install -r requirements.txt
 uvicorn app.main:app --reload
+```
+
+## ⚡ Run Offline Decryptor
+
+Launch the Tkinter GUI for decrypting files locally:
+
+```bash
+python offline_decryptor.py
 ```
 
 ✍️ Made by
