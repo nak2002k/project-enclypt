@@ -50,6 +50,7 @@ dashboard can show your history even without a database.
 
 - **Backend:** FastAPI + Python (`cryptography`)
 - **Database:** SQLite (simple, local)
+
 - **Desktop Tool:** Tkinter GUI for offline decryption
 - **Auth:** JWT-based login system
 - **Frontend:** Coming later (with clean dark-mode UI)
@@ -62,9 +63,11 @@ dashboard can show your history even without a database.
 - ✅ Secure key validation and input checks
 - ✅ Decryption routes fully working
 - ✅ Offline decryptor app (Tkinter GUI)
-- ✅ Dark mode planned into frontend
-- ✅ Login & sign-up implemented
-- ✅ File uploads for encryption/decryption
+
+- ✅ Dark mode UI in frontend
+- ✅ Login & signup flow working
+- ✅ File uploads for encrypt/decrypt
+
 
 ---
 
@@ -74,6 +77,11 @@ dashboard can show your history even without a database.
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
+
+## ⚡ Run Offline Decryptor
+
+Launch the Tkinter GUI for decrypting files locally:
+
 
 ```
 
