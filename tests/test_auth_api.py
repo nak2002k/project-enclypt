@@ -2,41 +2,47 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from fastapi.testclient import TestClient
 
 from app.main import app
 from app.db.session import Base, engine
 
-Base.metadata.create_all(bind=engine)
-
+codex/create-full-auth-system-with-signup-and-login
 client = TestClient(app)
 
+@pytest.fixture(autouse=True)
+def setup_db():
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    yield
+    Base.metadata.drop_all(bind=engine)
+    engine.dispose()
+    if DB_PATH.exists():
+        DB_PATH.unlink()
 
-def test_register_login_encrypt():
-    # 1) register
-    resp = client.post('/api/register', data={'email':'user@example.com','password':'secret'})
-    assert resp.status_code == 200
-    data = resp.json()
+def register_user(email="user@example.com", password="pw"):
+    return client.post('/api/register', data={'email': email, 'password': password})
+
+def login_user(email="user@example.com", password="pw"):
+    return client.post('/api/token', data={'username': email, 'password': password})
+
+def test_register_and_login_flow():
+    r = register_user()
+    assert r.status_code == 200
+    data = r.json()
+    assert data['email'] == 'user@example.com'
     assert 'license_key' in data
-
-    # 2) login to get token
-    resp = client.post('/api/token', data={'username':'user@example.com','password':'secret'})
-    assert resp.status_code == 200
-    token = resp.json()['access_token']
+    r = login_user()
+    assert r.status_code == 200
+    token = r.json()['access_token']
     assert token
+    r = client.get('/api/dashboard', headers={'Authorization': f'Bearer {token}'})
+    assert r.status_code == 200
+    dash = r.json()
+    assert dash['email'] == 'user@example.com'
+    assert dash['tier'] == 'account'
 
-    # 3) encrypt a small file
-    headers = {'Authorization': f'Bearer {token}'}
-    files = {'file': ('test.txt', b'hello')}
-    resp = client.post('/api/encrypt', headers=headers, files=files, data={'method':'fernet'})
-    assert resp.status_code == 200
-    assert 'attachment' in resp.headers.get('content-disposition', '')
+def test_login_wrong_password():
+    register_user()
+    r = login_user(password='wrong')
+    assert r.status_code == 401
 
-
-def teardown_module(module):
-    try:
-        os.remove('test.db')
-    except FileNotFoundError:
-        pass

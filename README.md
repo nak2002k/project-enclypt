@@ -75,6 +75,12 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
+Set a `SECRET_KEY` env var to sign JWTs in production:
+
+```bash
+export SECRET_KEY="your-secret-key"
+```
+
 ✍️ Made by
 @nak2002k
 Built from the ground up for people who want encryption that actually respects your files.
