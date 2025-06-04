@@ -51,7 +51,7 @@ dashboard can show your history even without a database.
 - **Backend:** FastAPI + Python (`cryptography`)
 - **Database:** SQLite (simple, local)
 - **Desktop Tool:** Tkinter GUI for offline decryption
-- **Auth:** Login system in progress
+- **Auth:** JWT-based login system
 - **Frontend:** Coming later (with clean dark-mode UI)
 
 ---
@@ -63,8 +63,8 @@ dashboard can show your history even without a database.
 - ✅ Decryption routes fully working
 - ✅ Offline decryptor app (WIP)
 - ✅ Dark mode planned into frontend
-- 🛠️ Login system in progress
-- 🚫 No file uploads or Sign ups for now
+- ✅ Login & sign-up implemented
+- ✅ File uploads for encryption/decryption
 
 ---
 
