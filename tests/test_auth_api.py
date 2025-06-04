@@ -1,12 +1,24 @@
 import os
 import sys
 from pathlib import Path
+ qml4uf-codex/create-full-auth-system-with-signup-and-login
+import pytest
+from fastapi.testclient import TestClient
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+DB_PATH = Path('test_auth.db')
+os.environ['DATABASE_URL'] = f"sqlite:///{DB_PATH}"
+os.environ['SECRET_KEY'] = 'testsecret'
+
+
+ main
 
 from app.main import app
 from app.db.session import Base, engine
 
-codex/create-full-auth-system-with-signup-and-login
+
+ main
 client = TestClient(app)
 
 @pytest.fixture(autouse=True)
