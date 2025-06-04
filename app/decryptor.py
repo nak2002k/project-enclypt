@@ -1,7 +1,7 @@
 import os
 import uuid
 from pathlib import Path
-from base64 import urlsafe_b64decode
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 from typing import Literal
 
 from cryptography.fernet import InvalidToken, Fernet
