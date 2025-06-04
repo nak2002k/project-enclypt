@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+ qml4uf-codex/create-full-auth-system-with-signup-and-login
 import pytest
 from fastapi.testclient import TestClient
 
@@ -10,9 +11,14 @@ DB_PATH = Path('test_auth.db')
 os.environ['DATABASE_URL'] = f"sqlite:///{DB_PATH}"
 os.environ['SECRET_KEY'] = 'testsecret'
 
+
+ main
+
 from app.main import app
 from app.db.session import Base, engine
 
+
+ main
 client = TestClient(app)
 
 @pytest.fixture(autouse=True)
@@ -51,3 +57,4 @@ def test_login_wrong_password():
     register_user()
     r = login_user(password='wrong')
     assert r.status_code == 401
+
