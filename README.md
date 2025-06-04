@@ -24,15 +24,15 @@ Built for creators, devs, and designers who want control, not chaos.
 
 | Tier     | Access                                  |
 |----------|------------------------------------------|
-| Guest    | Fernet only, 25MB cap per file, no account
-| Account  | Fernet + AES-256, 100MB cap, license key provided
-| Paid     | Fernet + AES-256 + RSA, no size limit
+- **Desktop Tool:** Tkinter GUI for offline decryption (now prettier)
+- **Auth:** Fully functional login & signup
+- **Frontend:** React + Tailwind with dark mode
 
 ---
 
-## 📁 Metadata Only
-
-We store only:
+- ✅ Dark mode UI in frontend
+- ✅ Login & signup flow working
+- ✅ File uploads for encrypt/decrypt
 - Filename
 - File hash
 - Encryption method

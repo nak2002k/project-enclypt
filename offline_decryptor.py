@@ -1,7 +1,8 @@
 import asyncio
 import os
 from io import BytesIO
-from tkinter import Tk, Label, Entry, Button, filedialog, StringVar, OptionMenu, messagebox
+from tkinter import Tk, StringVar, filedialog, messagebox
+from tkinter import ttk
 
 from app.decryptor import decrypt_file
 
@@ -10,26 +11,34 @@ class DecryptorGUI:
     def __init__(self):
         self.root = Tk()
         self.root.title("Enclypt Offline Decryptor")
+        self.root.resizable(False, False)
+        style = ttk.Style(self.root)
+        try:
+            style.theme_use("clam")
+        except:
+            pass
 
-        Label(self.root, text="Encrypted File:").grid(row=0, column=0, sticky="e")
+        pad = {"padx": 8, "pady": 6}
+
+        ttk.Label(self.root, text="Encrypted File:").grid(row=0, column=0, sticky="e", **pad)
         self.file_var = StringVar()
-        Entry(self.root, textvariable=self.file_var, width=40).grid(row=0, column=1)
-        Button(self.root, text="Browse", command=self.choose_file).grid(row=0, column=2)
+        ttk.Entry(self.root, textvariable=self.file_var, width=40).grid(row=0, column=1, **pad)
+        ttk.Button(self.root, text="Browse", command=self.choose_file).grid(row=0, column=2, **pad)
 
-        Label(self.root, text="Password / Key:").grid(row=1, column=0, sticky="e")
+        ttk.Label(self.root, text="Password / Key:").grid(row=1, column=0, sticky="e", **pad)
         self.pass_var = StringVar()
-        Entry(self.root, textvariable=self.pass_var, show="*").grid(row=1, column=1)
+        ttk.Entry(self.root, textvariable=self.pass_var, show="*").grid(row=1, column=1, **pad)
 
-        Label(self.root, text="Method:").grid(row=2, column=0, sticky="e")
+        ttk.Label(self.root, text="Method:").grid(row=2, column=0, sticky="e", **pad)
         self.method_var = StringVar(value="fernet")
-        OptionMenu(self.root, self.method_var, "fernet", "aes256", "rsa").grid(row=2, column=1, sticky="w")
+        ttk.Combobox(self.root, textvariable=self.method_var, values=["fernet", "aes256", "rsa"], state="readonly").grid(row=2, column=1, sticky="w", **pad)
 
-        Label(self.root, text="RSA Private Key:").grid(row=3, column=0, sticky="e")
+        ttk.Label(self.root, text="RSA Private Key:").grid(row=3, column=0, sticky="e", **pad)
         self.key_var = StringVar()
-        Entry(self.root, textvariable=self.key_var, width=40).grid(row=3, column=1)
-        Button(self.root, text="Browse", command=self.choose_key).grid(row=3, column=2)
+        ttk.Entry(self.root, textvariable=self.key_var, width=40).grid(row=3, column=1, **pad)
+        ttk.Button(self.root, text="Browse", command=self.choose_key).grid(row=3, column=2, **pad)
 
-        Button(self.root, text="Decrypt", command=self.run_decrypt).grid(row=4, column=1, pady=10)
+        ttk.Button(self.root, text="Decrypt", command=self.run_decrypt).grid(row=4, column=1, pady=12)
 
     def choose_file(self):
         path = filedialog.askopenfilename()
