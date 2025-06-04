@@ -58,7 +58,7 @@ Everything happens locally or in temp.
 - ✅ Backend encryption: Fernet, AES-256, RSA
 - ✅ Secure key validation and input checks
 - ✅ Decryption routes fully working
-- ✅ Offline decryptor app (WIP)
+- ✅ Offline decryptor app (Tkinter GUI)
 - ✅ Dark mode planned into frontend
 - 🛠️ Login system in progress
 - 🚫 No file uploads or Sign ups for now
@@ -70,6 +70,14 @@ Everything happens locally or in temp.
 ```bash
 pip install -r requirements.txt
 uvicorn app.main:app --reload
+```
+
+## ⚡ Run Offline Decryptor
+
+Launch the Tkinter GUI for decrypting files locally:
+
+```bash
+python offline_decryptor.py
 ```
 
 ✍️ Made by
