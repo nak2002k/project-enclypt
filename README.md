@@ -61,7 +61,7 @@ dashboard can show your history even without a database.
 - ✅ Backend encryption: Fernet, AES-256, RSA
 - ✅ Secure key validation and input checks
 - ✅ Decryption routes fully working
-- ✅ Offline decryptor app (WIP)
+- ✅ Offline decryptor app (Tkinter GUI)
 - ✅ Dark mode planned into frontend
 - ✅ Login & sign-up implemented
 - ✅ File uploads for encryption/decryption
@@ -75,10 +75,6 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Set a `SECRET_KEY` env var to sign JWTs in production:
-
-```bash
-export SECRET_KEY="your-secret-key"
 ```
 
 ✍️ Made by
