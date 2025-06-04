@@ -29,12 +29,17 @@ import { Loader2 } from "lucide-react"
 export default function Decrypt() {
   const { token } = useAuth()
   const [method, setMethod] = useState<"fernet" | "aes256" | "rsa">("fernet")
+  const [progress, setProgress] = useState<number | null>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
   const mutation = useMutation({
-    mutationFn: (formData: FormData) => postFile("/decrypt", formData, token!),
-    onMutate: () => toast.loading("Decrypting…"),
+    mutationFn: (formData: FormData) =>
+      postFile("/decrypt", formData, token!, setProgress),
+    onMutate: () => {
+      setProgress(0)
+      toast.loading("Decrypting…")
+    },
     onSuccess: (blob, form) => {
       toast.success("File decrypted! Download starting.")
       const url = URL.createObjectURL(blob)
@@ -46,10 +51,12 @@ export default function Decrypt() {
       a.click()
       a.remove()
       URL.revokeObjectURL(url)
+      setProgress(null)
     },
     onError: (err: any) => {
       toast.error(`Decryption failed: ${err.message}`)
     },
+    onSettled: () => setProgress(null),
   })
 
   // v5 mutation statuses: "idle" | "pending" | "error" | "success"
@@ -150,6 +157,15 @@ export default function Decrypt() {
                   </div>
                 )}
 
+                {/* Progress */}
+                {progress !== null && (
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded h-2 mb-2 overflow-hidden">
+                    <div
+                      className="bg-indigo-500 h-full transition-all"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                )}
                 {/* Submit Button */}
                 <AnimatedButton type="submit" className="w-full" disabled={isPending}>
                   {isPending ? (
