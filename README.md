@@ -70,7 +70,17 @@ Everything happens locally or in temp.
 ```bash
 pip install -r requirements.txt
 uvicorn app.main:app --reload
+```
+
 ✍️ Made by
 @nak2002k
 Built from the ground up for people who want encryption that actually respects your files.
+
+## 🧪 Running Tests
+
+Install test dependencies and run `pytest`:
+
+```bash
+pytest
+```
 
