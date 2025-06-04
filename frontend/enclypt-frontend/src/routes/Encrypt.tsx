@@ -48,13 +48,19 @@ export default function Encrypt() {
     tierAllowed(userTier, "fernet") ? "fernet" : "aes256"
   )
   const [file, setFile] = useState<File | null>(null)
+  const [progress, setProgress] = useState<number | null>(null)
+  const [dragOver, setDragOver] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
   const mutation = useMutation({
-    mutationFn: (formData: FormData) => postFile("/encrypt", formData, token || undefined),
-    onMutate: () => toast.loading("Encrypting…"),
+    mutationFn: (formData: FormData) =>
+      postFile("/encrypt", formData, token || undefined, setProgress),
+    onMutate: () => {
+      setProgress(0)
+      toast.loading("Encrypting…")
+    },
     onSuccess: (blob, form) => {
       toast.success("File encrypted! Download starting.")
       const url = URL.createObjectURL(blob)
@@ -68,10 +74,13 @@ export default function Encrypt() {
       URL.revokeObjectURL(url)
       setFile(null)
       if (fileInput.current) fileInput.current.value = ""
+      setProgress(null)
     },
     onError: (err: any) => {
       toast.error(`Encryption failed: ${err.message}`)
+      setProgress(null)
     },
+    onSettled: () => setProgress(null),
   })
 
   function filePreview(file: File | null) {
@@ -102,6 +111,13 @@ export default function Encrypt() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] || null
     setFile(f)
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const f = e.dataTransfer.files?.[0] || null
+    if (f) setFile(f)
+    setDragOver(false)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -177,11 +193,15 @@ export default function Encrypt() {
                 File to encrypt
               </label>
               <div
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
                 className={`flex items-center gap-4 rounded-xl px-4 py-3 border-2 border-dashed
-                ${file
+                ${dragOver
+                    ? "border-indigo-500 bg-indigo-100/50 dark:bg-indigo-900/50"
+                    : file
                     ? "border-indigo-400 bg-indigo-50/70 dark:bg-indigo-900/40"
-                    : "border-gray-300 bg-gray-100/60 dark:bg-gray-800/40"
-                  }
+                    : "border-gray-300 bg-gray-100/60 dark:bg-gray-800/40"}
                 `}
               >
                 <input
@@ -207,6 +227,14 @@ export default function Encrypt() {
                     "Encrypt"
                   )}
                 </AnimatedButton>
+                {progress !== null && (
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded h-2 mt-4 overflow-hidden">
+                    <div
+                      className="bg-indigo-500 h-full transition-all"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                )}
               </div>
               {file &&
                 <div className="mt-4 flex flex-col items-center">

@@ -183,18 +183,35 @@ export default function Dashboard() {
                   </div>
                   <AnimatePresence>
                     {showKey && (
-                      <motion.p
+                      <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="mt-2 p-2 bg-gray-100 dark:bg-gray-700 rounded font-mono break-all text-sm text-gray-800 dark:text-gray-100"
+                        className="mt-2 p-2 bg-gray-100 dark:bg-gray-700 rounded font-mono break-all text-sm text-gray-800 dark:text-gray-100 flex items-center"
                       >
-                        {keyQuery.isLoading
-                          ? "Fetching key…"
-                          : keyQuery.isError
-                          ? "Failed to load key"
-                          : keyQuery.data!.license_key}
-                      </motion.p>
+                        <span className="flex-1">
+                          {keyQuery.isLoading
+                            ? "Fetching key…"
+                            : keyQuery.isError
+                            ? "Failed to load key"
+                            : keyQuery.data!.license_key}
+                        </span>
+                        {!keyQuery.isLoading && !keyQuery.isError && (
+                          <AnimatedButton
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Copy license key"
+                            onClick={() =>
+                              navigator.clipboard.writeText(
+                                keyQuery.data!.license_key
+                              )
+                            }
+                            className="ml-2 text-gray-700 dark:text-gray-300"
+                          >
+                            📋
+                          </AnimatedButton>
+                        )}
+                      </motion.div>
                     )}
                   </AnimatePresence>
                 </CardContent>

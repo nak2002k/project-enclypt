@@ -3,6 +3,7 @@ uvicorn[standard]
 sqlalchemy
 cryptography
 passlib[bcrypt]
+argon2-cffi
 python-jose[cryptography]
 httpx<0.25
 python-multipart

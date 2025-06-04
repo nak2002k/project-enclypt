@@ -128,42 +128,48 @@ export async function postFile(
   path: string,
   formData: FormData,
   token?: string,
+  onProgress?: (pct: number) => void,
   timeoutMs = 30000
 ): Promise<Blob> {
   const url = buildUrl(path)
 
-  const headers: Record<string, string> = {}
-  if (token) headers["Authorization"] = `Bearer ${token}`
+  return new Promise<Blob>((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", url)
+    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.responseType = "blob"
 
-  const controller = new AbortController()
-  const id = setTimeout(() => controller.abort(), timeoutMs)
+    const timer = setTimeout(() => {
+      xhr.abort()
+      reject(new Error("Request timed out"))
+    }, timeoutMs)
 
-  let res: Response
-  try {
-    res = await fetch(url, {
-      method: "POST",
-      headers,
-      body: formData,
-      signal: controller.signal,
-    })
-  } catch (err: any) {
-    clearTimeout(id)
-    if (err.name === "AbortError") throw new Error("Request timed out")
-    throw new Error("Network error")
-  } finally {
-    clearTimeout(id)
-  }
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) {
+        onProgress((e.loaded / e.total) * 100)
+      }
+    }
 
-  if (!res.ok) {
-    const text = await res.text()
-    let message = text
-    try {
-      const json = JSON.parse(text)
-      if (json.detail) message = json.detail
-    } catch {}
-    throw new Error(message)
-  }
+    xhr.onload = () => {
+      clearTimeout(timer)
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(xhr.response)
+      } else {
+        let message = xhr.statusText
+        try {
+          const json = JSON.parse(xhr.responseText)
+          if (json.detail) message = json.detail
+        } catch {}
+        reject(new Error(message))
+      }
+    }
 
-  return res.blob()
+    xhr.onerror = () => {
+      clearTimeout(timer)
+      reject(new Error("Network error"))
+    }
+
+    xhr.send(formData)
+  })
 }
 

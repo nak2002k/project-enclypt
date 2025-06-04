@@ -1,7 +1,8 @@
 import os
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -15,14 +16,17 @@ SECRET_KEY    = os.getenv("SECRET_KEY", "CHANGE_THIS_SECRET")
 ALGORITHM     = "HS256"
 ACCESS_EXPIRE = timedelta(hours=2)
 
-pwd_ctx   = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_hasher = PasswordHasher()
 oauth2    = OAuth2PasswordBearer(tokenUrl="/api/token")
 
 def hash_pwd(pw: str) -> str:
-    return pwd_ctx.hash(pw)
+    return pwd_hasher.hash(pw)
 
 def verify_pwd(plain: str, hashed: str) -> bool:
-    return pwd_ctx.verify(plain, hashed)
+    try:
+        return pwd_hasher.verify(hashed, plain)
+    except VerifyMismatchError:
+        return False
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
